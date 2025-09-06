@@ -1,9 +1,7 @@
-name: Deploy to Linux Server
+name: Deploy Wine Map to Server
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
     branches: [ main ]
 
 jobs:
@@ -32,10 +30,21 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_KEY }}
-        port: ${{ secrets.PORT }}
+        port: ${{ secrets.PORT || 22 }}
         script: |
-          cd /path/to/your/wine-map
+          # 进入项目目录
+          cd /var/www/wine-map
+          
+          # 拉取最新代码
           git pull origin main
+          
+          # 安装依赖
           npm ci
+          
+          # 构建项目
           npm run build
+          
+          # 重启Nginx（如果需要）
           sudo systemctl reload nginx
+          
+          echo "✅ 部署完成！"
