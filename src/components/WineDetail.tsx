@@ -23,7 +23,7 @@ const WineDetail: React.FC<WineDetailProps> = ({ wine, onClose }) => {
   };
   const formatPrice = (price?: number) => {
     if (!price) return '价格未知';
-    return `¥${price}`;
+    return `S$${price}`;
   };
 
   const formatDate = (date?: string) => {
