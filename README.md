@@ -94,22 +94,41 @@ src/
 }
 ```
 
-## 部署
+## 快速部署
 
-### 自动部署到 Linux 服务器
-
-项目配置了 GitHub Actions 自动部署，每次 push 到 main 分支都会自动部署到你的 Linux 服务器。
+### 使用部署脚本（推荐）
+```bash
+./deploy.sh
+```
 
 ### 手动部署
 
-1. 构建项目：
+1. 推送到GitHub：
 ```bash
-npm run build
+git remote add origin https://github.com/你的用户名/wine-map.git
+git push -u origin main
 ```
 
-2. 将 `dist` 目录上传到你的服务器
+2. 在服务器上设置：
+```bash
+sudo mkdir -p /var/www/wine-map
+sudo chown $USER:$USER /var/www/wine-map
+cd /var/www/wine-map
+git clone https://github.com/你的用户名/wine-map.git .
+npm install && npm run build
+```
 
-3. 配置 Nginx 或其他 Web 服务器指向 `dist` 目录
+3. 配置Nginx（参考 `DEPLOYMENT_GUIDE.md`）
+
+### 自动部署
+
+项目配置了 GitHub Actions 自动部署，每次 push 到 main 分支都会自动部署到你的 Linux 服务器。
+
+**配置GitHub Secrets：**
+- `HOST`: 服务器IP地址
+- `USERNAME`: 服务器用户名  
+- `SSH_KEY`: SSH私钥内容
+- `PORT`: SSH端口（默认22）
 
 ## 自定义配置
 
