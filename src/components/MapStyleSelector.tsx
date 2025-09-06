@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Globe, Mountain, Palette } from 'lucide-react';
+import { MapPin, Globe, Palette } from 'lucide-react';
 
 export interface MapStyle {
   id: string;

@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
 import { Wine } from './types/wine';
 import { sampleWines } from './data/wines';
 import WineDetail from './components/WineDetail';
-import CustomMarker from './components/CustomMarker';
 import MapStyleSelector, { MapStyle, mapStyles } from './components/MapStyleSelector';
 import 'leaflet/dist/leaflet.css';
 
@@ -44,7 +42,6 @@ function App() {
         maxZoom={18}
         zoomSnap={0.5}
         zoomDelta={0.5}
-        wheelPxPerZoomLevel={120}
         style={{ height: '100vh', width: '100%' }}
         zoomControl={true}
         scrollWheelZoom={true}

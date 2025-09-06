@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, MapPin, Calendar, DollarSign, Star, Wine, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, MapPin, Calendar, DollarSign, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Wine as WineType } from '../types/wine';
 
 interface WineDetailProps {
