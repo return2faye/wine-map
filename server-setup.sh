@@ -34,8 +34,7 @@ log_error() {
 
 # 检查是否为root用户
 if [ "$EUID" -eq 0 ]; then
-    log_error "请不要使用root用户运行此脚本"
-    exit 1
+    log_warning "检测到root用户，将使用root权限进行部署"
 fi
 
 # 设置GitHub仓库信息
@@ -68,8 +67,7 @@ fi
 
 # 4. 创建项目目录
 log_info "创建项目目录..."
-sudo mkdir -p /var/www/wine-map
-sudo chown $USER:$USER /var/www/wine-map
+mkdir -p /var/www/wine-map
 cd /var/www/wine-map
 
 # 5. 克隆项目
@@ -117,53 +115,53 @@ server {
 EOF
 
 # 启用站点
-sudo ln -sf /etc/nginx/sites-available/wine-map /etc/nginx/sites-enabled/
-sudo rm -f /etc/nginx/sites-enabled/default
+ln -sf /etc/nginx/sites-available/wine-map /etc/nginx/sites-enabled/
+rm -f /etc/nginx/sites-enabled/default
 
 # 测试Nginx配置
-sudo nginx -t
+nginx -t
 
 # 启动Nginx
-sudo systemctl enable nginx
-sudo systemctl restart nginx
+systemctl enable nginx
+systemctl restart nginx
 
 # 8. 配置防火墙
 log_info "配置防火墙..."
-sudo ufw allow 22/tcp
-sudo ufw allow 80/tcp
-sudo ufw allow 443/tcp
-sudo ufw --force enable
+ufw allow 22/tcp
+ufw allow 80/tcp
+ufw allow 443/tcp
+ufw --force enable
 
 # 9. 创建自动更新脚本
 log_info "创建自动更新脚本..."
-sudo tee /usr/local/bin/update-wine-map > /dev/null <<'EOF'
+tee /usr/local/bin/update-wine-map > /dev/null <<'EOF'
 #!/bin/bash
 cd /var/www/wine-map
 git pull origin main
 npm install
 npm run build
-sudo systemctl reload nginx
+systemctl reload nginx
 echo "$(date): Wine map updated" >> /var/log/wine-map-update.log
 EOF
 
-sudo chmod +x /usr/local/bin/update-wine-map
+chmod +x /usr/local/bin/update-wine-map
 
 # 10. 创建systemd服务（用于自动更新）
 log_info "创建自动更新服务..."
-sudo tee /etc/systemd/system/wine-map-update.service > /dev/null <<EOF
+tee /etc/systemd/system/wine-map-update.service > /dev/null <<EOF
 [Unit]
 Description=Wine Map Auto Update
 After=network.target
 
 [Service]
 Type=oneshot
-User=$USER
+User=root
 WorkingDirectory=/var/www/wine-map
 ExecStart=/usr/local/bin/update-wine-map
 EOF
 
 # 11. 创建定时器（每天凌晨2点检查更新）
-sudo tee /etc/systemd/system/wine-map-update.timer > /dev/null <<EOF
+tee /etc/systemd/system/wine-map-update.timer > /dev/null <<EOF
 [Unit]
 Description=Run Wine Map Update Daily
 Requires=wine-map-update.service
@@ -176,22 +174,22 @@ Persistent=true
 WantedBy=timers.target
 EOF
 
-sudo systemctl daemon-reload
-sudo systemctl enable wine-map-update.timer
-sudo systemctl start wine-map-update.timer
+systemctl daemon-reload
+systemctl enable wine-map-update.timer
+systemctl start wine-map-update.timer
 
 # 12. 安装SSL证书（可选）
 read -p "是否安装SSL证书？(y/N): " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     log_info "安装SSL证书..."
-    sudo apt install -y certbot python3-certbot-nginx
-    sudo certbot --nginx -d $DOMAIN_OR_IP --non-interactive --agree-tos --email admin@$DOMAIN_OR_IP
+    apt install -y certbot python3-certbot-nginx
+    certbot --nginx -d $DOMAIN_OR_IP --non-interactive --agree-tos --email admin@$DOMAIN_OR_IP
 fi
 
 # 13. 创建备份脚本
 log_info "创建备份脚本..."
-sudo tee /usr/local/bin/backup-wine-map > /dev/null <<EOF
+tee /usr/local/bin/backup-wine-map > /dev/null <<EOF
 #!/bin/bash
 DATE=\$(date +%Y%m%d_%H%M%S)
 BACKUP_DIR="/backup/wine-map"
@@ -204,7 +202,7 @@ tar -czf \$BACKUP_DIR/wine-map-backup-\$DATE.tar.gz -C \$PROJECT_DIR .
 find \$BACKUP_DIR -name "wine-map-backup-*.tar.gz" -mtime +7 -delete
 EOF
 
-sudo chmod +x /usr/local/bin/backup-wine-map
+chmod +x /usr/local/bin/backup-wine-map
 
 # 添加备份到定时任务
 (crontab -l 2>/dev/null; echo "0 2 * * * /usr/local/bin/backup-wine-map") | crontab -

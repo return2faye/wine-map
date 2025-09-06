@@ -1,8 +1,9 @@
 name: Deploy Wine Map to Server
 
-on:
-  push:
-    branches: [ main ]
+# Disabled - using manual deployment instead
+# on:
+#   push:
+#     branches: [ main ]
 
 jobs:
   build-and-deploy:
