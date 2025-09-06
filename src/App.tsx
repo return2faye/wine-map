@@ -38,21 +38,7 @@ function App() {
       <MapContainer
         center={[20, 0]}
         zoom={3}
-        minZoom={2}
-        maxZoom={18}
         style={{ height: '100vh', width: '100%' }}
-        zoomControl={true}
-        scrollWheelZoom={true}
-        doubleClickZoom={true}
-        touchZoom={true}
-        boxZoom={true}
-        keyboard={true}
-        dragging={true}
-        zoomAnimation={true}
-        fadeAnimation={true}
-        markerZoomAnimation={true}
-        worldCopyJump={false}
-        noWrap={true}
       >
         <TileLayer
           attribution={currentMapStyle.attribution}
