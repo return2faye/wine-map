@@ -40,7 +40,8 @@ GITHUB_URL="https://github.com/$GITHUB_USERNAME/$REPO_NAME.git"
 log_info "GitHub仓库: $GITHUB_URL"
 
 # 获取域名或IP
-read -p "请输入你的域名或IP地址: " DOMAIN_OR_IP
+read -p "请输入你的域名或IP地址 (直接回车使用默认): " DOMAIN_OR_IP
+DOMAIN_OR_IP=${DOMAIN_OR_IP:-_}
 
 # 1. 更新系统
 log_info "更新系统包..."
@@ -142,8 +143,16 @@ echo ""
 
 # 测试部署
 log_info "测试部署..."
-if curl -s -o /dev/null -w "%{http_code}" http://$DOMAIN_OR_IP | grep -q "200"; then
+if [ "$DOMAIN_OR_IP" = "_" ]; then
+    TEST_URL="http://localhost"
+else
+    TEST_URL="http://$DOMAIN_OR_IP"
+fi
+
+if curl -s -o /dev/null -w "%{http_code}" $TEST_URL | grep -q "200"; then
     log_success "✅ 网站运行正常！"
+    echo "  🌐 访问地址: $TEST_URL"
 else
     log_warning "⚠️  网站可能还在启动中，请稍等片刻"
+    echo "  🌐 访问地址: $TEST_URL"
 fi
