@@ -4,7 +4,6 @@ import { AnimatePresence } from 'framer-motion';
 import { Wine } from './types/wine';
 import { sampleWines } from './data/wines';
 import WineDetail from './components/WineDetail';
-import MapStyleSelector, { MapStyle, mapStyles } from './components/MapStyleSelector';
 import 'leaflet/dist/leaflet.css';
 
 // 修复Leaflet默认图标问题
@@ -19,7 +18,6 @@ L.Icon.Default.mergeOptions({
 function App() {
   const [selectedWine, setSelectedWine] = useState<Wine | null>(null);
   const [wines] = useState<Wine[]>(sampleWines);
-  const [currentMapStyle, setCurrentMapStyle] = useState<MapStyle>(mapStyles[0]);
 
   const handleMarkerClick = (wine: Wine) => {
     setSelectedWine(wine);
@@ -27,10 +25,6 @@ function App() {
 
   const handleCloseDetail = () => {
     setSelectedWine(null);
-  };
-
-  const handleMapStyleChange = (style: MapStyle) => {
-    setCurrentMapStyle(style);
   };
 
   return (
@@ -41,8 +35,8 @@ function App() {
         style={{ height: '100vh', width: '100%' }}
       >
         <TileLayer
-          attribution={currentMapStyle.attribution}
-          url={currentMapStyle.url}
+          attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
           subdomains="abcd"
           maxZoom={20}
           noWrap={true}
@@ -84,11 +78,6 @@ function App() {
           </Marker>
         ))}
       </MapContainer>
-
-      <MapStyleSelector
-        currentStyle={currentMapStyle.id}
-        onStyleChange={handleMapStyleChange}
-      />
 
       <AnimatePresence>
         {selectedWine && (
