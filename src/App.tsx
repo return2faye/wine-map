@@ -40,8 +40,6 @@ function App() {
         zoom={3}
         minZoom={2}
         maxZoom={18}
-        zoomSnap={0.5}
-        zoomDelta={0.5}
         style={{ height: '100vh', width: '100%' }}
         zoomControl={true}
         scrollWheelZoom={true}
@@ -54,8 +52,6 @@ function App() {
         fadeAnimation={true}
         markerZoomAnimation={true}
         worldCopyJump={false}
-        maxBounds={[[-85, -180], [85, 180]]}
-        maxBoundsViscosity={1.0}
         noWrap={true}
       >
         <TileLayer
